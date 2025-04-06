@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>IntelliNation Glücksrad</title>
+  <style>
+    body {
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .wheel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%; /* Stellt sicher, dass es ein Kreis ist */
+      border: 10px solid #2c3e50;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      background: conic-gradient(
+        #121c3a 0deg 120deg,
+        #eb2339 120deg 240deg,
+        #edf0ec 240deg 360deg
+      );
+      transition: transform 2.5s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform-origin: center;
+    }
+
+    .number::before {
+      content: attr(data-number);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      font-weight: normal;
+    }
+
+    .n1 {
+      transform: rotate(60deg);
+    }
+
+    .n1::before {
+      transform: translateX(-50%) translateY(-120px) rotate(-60deg);
+      color: #ffffff;
+    }
+
+    .n2 {
+      transform: rotate(180deg);
+    }
+
+    .n2::before {
+      transform: translateX(-50%) translateY(-120px) rotate(-180deg);
+      color: #ffffff;
+    }
+
+    .n3 {
+      transform: rotate(300deg);
+    }
+
+    .n3::before {
+      transform: translateX(-50%) translateY(-120px) rotate(-300deg);
+      color: #000000;
+    }
+
+    /* Das spitze Dreieck, das nach unten zeigt */
+    .triangle {
+      position: absolute;
+      top: 8px; /* Nach unten verschoben, damit es ins Rad hineinragt */
+      left: 53.4%;
+      transform: translateX(-50%) rotate(180deg); /* Drehen, sodass die Spitze nach unten zeigt */
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;  /* Spitzer machen */
+      border-right: 10px solid transparent; /* Spitzer machen */
+      border-bottom: 30px solid #2c3e50; /* Farbe des Dreiecks */
+      z-index: 10; /* Stellen Sie sicher, dass das Dreieck im Vordergrund ist */
+    }
+  </style>
+</head>
+<body>
+  <h1>Drücke die Leertaste oder klicke das Rad zum Drehen!</h1>
+  <div class="wheel-container">
+    <!-- Das Dreieck -->
+    <div class="triangle"></div>
+    
+    <div class="wheel" id="wheel">
+      <div class="number n1" id="num1" data-number="1"></div>
+      <div class="number n2" id="num2" data-number="2"></div>
+      <div class="number n3" id="num3" data-number="3"></div>
+    </div>
+  </div>
+
+  <script>
+    const wheel = document.getElementById('wheel');
+    const numbers = {
+      1: document.getElementById('num1'),
+      2: document.getElementById('num2'),
+      3: document.getElementById('num3')
+    };
+
+    let spinning = false;
+    let currentRotation = 0;
+
+    function spinWheel() {
+      if (spinning) return;
+
+      spinning = true;
+
+      // Reset alle Zahlen
+      for (let i = 1; i <= 3; i++) {
+        numbers[i].style.fontWeight = 'normal';
+      }
+
+      const number = Math.floor(Math.random() * 3) + 1;
+      const baseRotation = (number - 1) * 120;
+      const extraSpins = 5;
+      const randomOffset = Math.floor(Math.random() * 30) - 15;
+      const targetRotation = extraSpins * 360 + baseRotation + randomOffset;
+
+      currentRotation += targetRotation;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        numbers[number].style.fontWeight = 'bold';
+        spinning = false;
+      }, 2500);
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        spinWheel();
+      }
+    });
+
+    // Event-Listener für das Klicken auf das Rad
+    wheel.addEventListener('click', function() {
+      spinWheel();
+    });
+  </script>
+</body>
+</html>
